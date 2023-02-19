@@ -6,7 +6,10 @@
     <title>Scrollama: Sticky Overlay Example</title>
     <meta name="description" content="Scrollama: Sticky Overlay Example" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!--global css for the page -->
     <link rel="stylesheet" href="style.css" />
+
+    <!-- CSS for the specific elements-->
     <style>
       #scrolly {
         position: relative;
@@ -35,7 +38,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        background-image: url('images/mountains.jpg');
+        background: url('images/mountains.jpg');
         background-size: cover;
         background-position: center center;
       }
@@ -90,13 +93,17 @@
         </p>
       </section>
 
+
+      <!--THIS IS THE IMPORTANT PART!!!!!-->
+      <!-- classes must be kept same-->
       <section id="scrolly">
         <div class="sticky-thing">
           <p>0</p>
         </div>
 
+        <!-- article tag keeps these steps together (formated above)-->
         <article>
-          <div class="step" data-step="1" data-color="red">
+          <div class="step" data-step="1" data-color="red" >
             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
           </div>
           <div class="step" data-step="2" data-color="green">
@@ -111,21 +118,34 @@
         </article>
       </section>
 
+      <!-- adds extra space at bottom to ensure last step is triggered-->
       <section id="outro"></section>
     </main>
 
     <!-- <div class='debug'></div> -->
+    <!--JS LIBRARIES USED-->
     <script src="https://unpkg.com/intersection-observer@0.5.1/intersection-observer.js"></script>
     <script src="https://unpkg.com/scrollama"></script>
+
+    <!--here's where all the JS lives to make it interactive-->
     <script>
       // DOM - document object model
+      //grabs stuff off page to ref later
+      //selects everything inside the ___ tag 
       var main = document.querySelector("main");
+
+      //grab the div with the id scrolly w/in main
       var scrolly = main.querySelector("#scrolly");
       var sticky = scrolly.querySelector(".sticky-thing");
       var article = scrolly.querySelector("article");
+
+      //the All part ensures that all steps are selected not just 1
       var steps = article.querySelectorAll(".step");
 
-      // initialize the scrollama
+      //can select more specifically 
+      //ie p tag in sticky thing -> document.querySelector(".sticky-thing p")
+
+
       var scroller = scrollama();
 
       // scrollama event handlers
@@ -133,17 +153,25 @@
         // response = { element, direction, index }
         var el = response.element;
         console.log(el);
+        //el = current step
         
-        // remove is-active from all steps
-        // then add is-active to this step
+        // remove is-active property from all steps
+        // then add is-active to the step we are on
+        //chooses what background to show
         steps.forEach(step => step.classList.remove('is-active'));
         el.classList.add('is-active');
 
         // update graphic based on step
         // use "template literals" with backticks
         sticky.querySelector("p").innerText = `Step number ${el.dataset.step}`;
+        sticky.querySelector("p").style.color = el.dataset.color;
+
+        url = new URL("file:///C:/Users/kaiwf/OneDrive/Desktop/Visual%20Storytelling/Visual-storytelling-playground/images/rock1.jpg");
+        document.querySelector(".sticky-thing").background = url;
+
         sticky.style.backgroundColor = el.dataset.color;
-        sticky.querySelector("p").style.fontSize = `${el.dataset.step}rem`;
+
+        //dataset grabs data-step from the divs with the
       }
 
       function init() {
@@ -152,13 +180,18 @@
         // 3. bind scrollama event handlers (this can be chained like below)
         scroller
           .setup({
+            //step inside of article inside of scrolly
             step: "#scrolly article .step",
+            //offset chooses where trigger lies on the page
             offset: 0.33,
-            debug: true
+
+            //choose to show/hide trigger
+            debug: false
           })
+          //when we enter a step use the step handler function
           .onStepEnter(handleStepEnter);
 
-        // setup resize event
+        //listens for resize event
         window.addEventListener("resize", scroller.resize);
       }
 
